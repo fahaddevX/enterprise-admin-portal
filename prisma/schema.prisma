@@ -30,12 +30,15 @@ model User {
 }
 
 model Import {
-  id          String       @id @default(cuid())
-  filename    String
-  status      ImportStatus @default(PENDING)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  syncRecords SyncRecord[]
+  id            String       @id @default(cuid())
+  filename      String
+  status        ImportStatus @default(PENDING)
+  totalRows     Int          @default(0)
+  processedRows Int          @default(0)
+  failedRows    Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  syncRecords   SyncRecord[]
 }
 
 model SyncRecord {
