@@ -20,6 +20,12 @@ async function main() {
         syncRecordId: string;
       };
 
+      const importRecord = await db.import.findUnique({
+        where: { id: importId },
+        select: { filename: true },
+      });
+      const filename = importRecord?.filename ?? importId;
+
       await db.syncRecord.update({
         where: { id: syncRecordId },
         data: { status: "SYNCING" },
@@ -31,10 +37,22 @@ async function main() {
           where: { id: syncRecordId },
           data: { status: "SYNCED", crmId },
         });
+        await db.notification.create({
+          data: {
+            event: "SYNC_COMPLETED",
+            message: `CRM sync for ${filename} completed`,
+          },
+        });
       } catch (err) {
         await db.syncRecord.update({
           where: { id: syncRecordId },
           data: { status: "FAILED" },
+        });
+        await db.notification.create({
+          data: {
+            event: "SYNC_FAILED",
+            message: `CRM sync for ${filename} failed`,
+          },
         });
         throw err;
       }

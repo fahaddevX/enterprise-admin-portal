@@ -81,5 +81,16 @@ export async function POST(request: NextRequest) {
     data: { status: finalStatus, totalRows, processedRows, failedRows },
   });
 
+  await db.notification.create({
+    data: {
+      event:
+        finalStatus === "COMPLETED" ? "IMPORT_COMPLETED" : "IMPORT_FAILED",
+      message:
+        finalStatus === "COMPLETED"
+          ? `Import of ${file.name} completed — ${processedRows} rows`
+          : `Import of ${file.name} failed`,
+    },
+  });
+
   return NextResponse.json(result, { status: 201 });
 }

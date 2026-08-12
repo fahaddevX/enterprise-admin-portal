@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { Skeleton } from "@/components/Skeleton";
+
 type SyncRecord = {
   id: string;
   status: string;
@@ -73,6 +75,8 @@ export function StatusTable() {
   }, []);
 
   useEffect(() => {
+    // async fn — setState only fires after await, never synchronously in the effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchStatus();
     const id = setInterval(fetchStatus, 3000);
     return () => clearInterval(id);
@@ -104,12 +108,9 @@ export function StatusTable() {
 
   if (rows === null) {
     return (
-      <div className="animate-pulse space-y-2">
+      <div className="space-y-2">
         {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="h-10 rounded bg-zinc-200 dark:bg-zinc-700"
-          />
+          <Skeleton key={i} className="h-10" />
         ))}
       </div>
     );
@@ -117,13 +118,31 @@ export function StatusTable() {
 
   if (rows.length === 0) {
     return (
-      <p className="text-zinc-500 dark:text-zinc-400 text-sm">
-        No imports yet.{" "}
-        <a href="/imports" className="underline hover:text-zinc-700">
-          Upload a CSV
-        </a>{" "}
-        to get started.
-      </p>
+      <div className="text-center py-16">
+        <svg
+          className="mx-auto mb-4 h-10 w-10 text-zinc-300 dark:text-zinc-600"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
+        </svg>
+        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">
+          No imports yet
+        </p>
+        <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-4">
+          Upload a CSV file to start tracking import and sync progress.
+        </p>
+        <a
+          href="/imports"
+          className="inline-flex items-center px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors"
+        >
+          Upload CSV
+        </a>
+      </div>
     );
   }
 
