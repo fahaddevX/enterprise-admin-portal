@@ -7,8 +7,43 @@ datasource db {
   provider = "postgresql"
 }
 
-// Placeholder model — exercises migrations and the Prisma client in Phase 2.
-// Replace with real domain models in Phase 3 (Data model).
-model Health {
-  id Int @id @default(autoincrement())
+enum ImportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCING
+  SYNCED
+  FAILED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Import {
+  id          String       @id @default(cuid())
+  filename    String
+  status      ImportStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  syncRecords SyncRecord[]
+}
+
+model SyncRecord {
+  id        String     @id @default(cuid())
+  importId  String
+  import    Import     @relation(fields: [importId], references: [id])
+  status    SyncStatus @default(PENDING)
+  crmId     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
