@@ -1,0 +1,14 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Placeholder model — exercises migrations and the Prisma client in Phase 2.
+// Replace with real domain models in Phase 3 (Data model).
+model Health {
+  id Int @id @default(autoincrement())
+}
