@@ -42,3 +42,10 @@ Numbered task groups in execution order. Complete each group before moving to th
    - Upload a CSV via `/imports`, note the returned `importId`
    - `POST /api/sync/:importId` → confirm 202 and `status: PENDING`
    - `GET /api/sync/:importId` → confirm `status: SYNCED` and `crmId` populated
+
+9. **UI trigger (added in Phase 6)**
+   - The `/status` progress table shows a "Sync to CRM" button on rows where
+     `import.status === COMPLETED` and no SyncRecord exists yet
+   - Clicking calls `POST /api/sync/[importId]`, disables the button while in
+     flight (shows "Syncing…"), then refreshes the table immediately on completion
+   - Implemented in `components/StatusTable.tsx` alongside the polling loop

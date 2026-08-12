@@ -6,7 +6,7 @@ Introduce a BullMQ-backed sync pipeline that an operator triggers manually. A `P
 
 ## Trigger model
 
-Sync is **manually triggered** per import. The operator calls `POST /api/sync/:importId` after a completed import. This decouples the import and sync lifecycles and gives operators control over when data leaves the system.
+Sync is **manually triggered** per import. The primary entry point is a **"Sync to CRM" button** in the progress status table (`/status`), which appears on any row whose import is `COMPLETED` and has no CRM sync record yet. Clicking it calls `POST /api/sync/:importId` and immediately refreshes the table. The API endpoint can also be called directly for scripting or testing.
 
 ## Mock CRM client
 
@@ -62,7 +62,7 @@ One `SyncRecord` is created per trigger call. Re-triggering a synced import crea
 - Per-user CRM field mapping (import-level sync only in this phase)
 - Retry configuration for failed jobs (BullMQ default retries apply)
 - Auth / access control on the sync endpoints
-- UI for viewing sync history (Phase 6 — progress status page)
+- UI for viewing full sync history (Phase 6 shows only the latest SyncRecord per import)
 
 ## Context
 
